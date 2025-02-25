@@ -1,4 +1,7 @@
-#[cfg(all(feature = "ipc-transport", target_family = "unix"))]
+#[cfg(any(
+    all(feature = "ipc-transport", target_family = "unix"),
+    all(feature = "ipc-transport", target_family = "wasm")
+))]
 mod ipc;
 #[cfg(feature = "tcp-transport")]
 mod tcp;
@@ -30,7 +33,10 @@ pub(crate) async fn connect(endpoint: &Endpoint) -> ZmqResult<(FramedIo, Endpoin
             do_if_enabled!("tcp-transport", tcp::connect(_host, *_port).await)
         }
         Endpoint::Ipc(_path) => {
-            #[cfg(all(feature = "ipc-transport", target_family = "unix"))]
+            #[cfg(any(
+                all(feature = "ipc-transport", target_family = "unix"),
+                all(feature = "ipc-transport", target_family = "wasm")
+            ))]
             {
                 if let Some(path) = _path {
                     ipc::connect(path).await
@@ -40,7 +46,10 @@ pub(crate) async fn connect(endpoint: &Endpoint) -> ZmqResult<(FramedIo, Endpoin
                     ))
                 }
             }
-            #[cfg(not(all(feature = "ipc-transport", target_family = "unix")))]
+            #[cfg(not(any(
+                all(feature = "ipc-transport", target_family = "unix"),
+                all(feature = "ipc-transport", target_family = "wasm")
+            )))]
             panic!("IPC transport is not available on this platform")
         }
     }
@@ -73,7 +82,10 @@ where
             tcp::begin_accept(_host, _port, _cback).await
         ),
         Endpoint::Ipc(_path) => {
-            #[cfg(all(feature = "ipc-transport", target_family = "unix"))]
+            #[cfg(any(
+                all(feature = "ipc-transport", target_family = "unix"),
+                all(feature = "ipc-transport", target_family = "wasm")
+            ))]
             {
                 if let Some(path) = _path {
                     ipc::begin_accept(&path, _cback).await
@@ -83,7 +95,10 @@ where
                     ))
                 }
             }
-            #[cfg(not(all(feature = "ipc-transport", target_family = "unix")))]
+            #[cfg(not(any(
+                all(feature = "ipc-transport", target_family = "unix"),
+                all(feature = "ipc-transport", target_family = "wasm")
+            )))]
             panic!("IPC transport is not available on this platform")
         }
     }
