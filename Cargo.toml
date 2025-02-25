@@ -30,7 +30,9 @@ async-trait = "0.1"
 parking_lot = "0.12"
 rand = "0.8"
 bytes = "1"
-tokio = { version = "1", features = ["full"], optional = true }
+tokio = { git = "https://github.com/second-state/wasi_tokio.git", branch = "v1.36.x", features = [
+    "full",
+], optional = true }
 tokio-util = { version = "0.7", features = ["compat"], optional = true }
 num-traits = "0.2"
 dashmap = "5"
